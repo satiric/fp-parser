@@ -1,0 +1,25 @@
+{
+    "name": "decadal/fp-parser",
+    "description": "Funpay's task",
+    "keywords": ["funpay"],
+    "homepage": "https://github.com/satiric",
+    "license": "Proprietary",
+    "minimum-stability": "stable",
+    "authors": [
+        {
+            "name": "Maruhnich Konstantin",
+            "email": "nocturneumbra@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.2",
+        "ext-json": "*",
+        "ext-mbstring" : "*"
+    },
+
+    "autoload": {
+        "psr-4": {
+            "Decadal\\FpParser\\": "src"
+        }
+    }
+}
