@@ -24,5 +24,5 @@ $parser = new YandexConfirmationParser($validator, $analyzer);
 
 $model = $parser->parseStrict($sms);
 echo PHP_EOL."to: ".$model->getRecipient().PHP_EOL;
-echo PHP_EOL."amount: ".$model->getAmount().PHP_EOL;
+echo PHP_EOL."amount: ".$model->getAmount()." cents (I mean Russian cents)".PHP_EOL;
 echo PHP_EOL."code: ".$model->getConfirmationCode().PHP_EOL;
