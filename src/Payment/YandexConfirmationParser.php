@@ -44,21 +44,21 @@ class YandexConfirmationParser implements PaymentConfirmationParserInterface
             if($purse) {
                 $model->setRecipient($purse);
                 //yandex purse is the most composite an can be cause to incorrect amount or confirmation code extraction
-                $text = preg_replace($rawPurse, '', $text);
+                $text = str_replace($rawPurse, '', $text);
             }
         }
         //amount is more determinate and specified part of the confirmation than code (rare case but it can be like sdkk$i12$)
         $rawAmount = $this->analyzer->extractAmount($text);
         if($rawAmount) {
-            $amount = $this->sanitizeAmount($rawAmount);
+            $amount = $this->analyzer->sanitizeAmount($rawAmount);
             $model->setAmount($amount);
-            $text = preg_replace($rawAmount, '', $text);
+            $text = str_replace($rawAmount, '', $text);
         }
         $rawCode = $this->analyzer->extractConfirmationCode($text);
         if(!$rawCode) {
             throw new \Exception("Couldn't find acceptance code");
         }
-        $code = $this->sanitizeCode($rawCode);
+        $code = $this->analyzer->sanitizeConfirmationCode($rawCode);
         $model->setConfirmationCode($code);
         return $model;
     }
@@ -81,7 +81,7 @@ class YandexConfirmationParser implements PaymentConfirmationParserInterface
         }
         $model->setRecipient($purse);
         //yandex purse is the most composite an can be cause to incorrect amount or confirmation code extraction
-        $text = preg_replace($rawPurse, '', $text);
+        $text = str_replace($rawPurse, '', $text);
 
         //amount is more determinate and specified part of the confirmation than code (rare case but it can be like sdkk$i12$)
         $rawAmount = $this->analyzer->extractAmount($text);
@@ -92,38 +92,23 @@ class YandexConfirmationParser implements PaymentConfirmationParserInterface
         if(!$rawCurrency) {
             throw new \Exception("Couldn't find currency in the text: no possibility to find difference between amount and code");
         }
-        $amount = $this->sanitizeAmount($rawAmount);
+        $amount = $this->analyzer->sanitizeAmount($rawAmount);
         if(!$amount) {
             throw new \Exception("Couldn't sanitize amount");
         }
         $model->setAmount($amount);
-        $text = preg_replace($rawAmount, '', $text);
+        $text = str_replace($rawAmount, '', $text);
         $rawCode = $this->analyzer->extractConfirmationCode($text);
         if(!$rawCode) {
             throw new \Exception("Couldn't find acceptance code");
         }
-        $code = $this->sanitizeCode($rawCode);
+
+        $code = $this->analyzer->sanitizeConfirmationCode($rawCode);
         if(!$code) {
             throw new \Exception("Couldn't sanitize code");
         }
         $model->setConfirmationCode($code);
         return $model;
-    }
-
-
-    private function sanitizeAmount(string $amount) : ?int
-    {
-
-    }
-
-    private function sanitizeCode(string $code) : ?string
-    {
-
-    }
-
-    private function sanitizePurse(string $purse) : string
-    {
-
     }
 
     /**
@@ -132,7 +117,7 @@ class YandexConfirmationParser implements PaymentConfirmationParserInterface
      */
     private function extractValidPurse(string $rawPurse) : ? string
     {
-        $purse = $this->sanitizePurse($rawPurse);
+        $purse = $this->analyzer->sanitizePurse($rawPurse);
         if(!$this->yandexPurseValidator->validate($purse)) {
             return null;
         }
